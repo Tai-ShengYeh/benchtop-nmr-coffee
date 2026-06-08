@@ -15,6 +15,7 @@
 | FTIR 紅外 | PCA + PLS-DA | 咖啡 Arabica/Robusta | [↗](https://tai-shengyeh.github.io/ftir-food-analysis/teaching.html) |
 | **Benchtop NMR（本課）** | **PCA + PLS + PLS-DA** | **咖啡 16-OMC 真偽** | [↗](https://tai-shengyeh.github.io/benchtop-nmr-coffee/teaching.html) |
 | 咖啡化學成分 | PCA + GMM 集群 | pgmm coffee | [↗](https://tai-shengyeh.github.io/coffee_pgmm_R_code/coffee_pgmm.html) |
+| GC 氣相層析 | PCA + PLS-DA | 咖啡 Arabica/Robusta | [↗](https://tai-shengyeh.github.io/coffee-gc-analysis/teaching.html) |
 
 > 🔗 與 **FTIR**（咖啡 Arabica/Robusta）和 **coffee_pgmm**（咖啡化學成分）同主題，可串成一條「咖啡真偽鑑別」教學線。
 > 🏠 課程總入口：<https://tai-shengyeh.github.io/>
