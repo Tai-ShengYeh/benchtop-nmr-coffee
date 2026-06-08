@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Benchtop NMR × 咖啡真偽 — PCA / PLS / PLS-DA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#FFFFFF;--paper2:#F2EDDC;--ink:#1A1A1A;--ink-soft:#403a30;--teal:#0E7C7B;--coral:#E36414;--gold:#C8941F;--line:#D9D2BE;--cover:#119C9A;}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0;font-family:'Noto Sans TC',system-ui,sans-serif;font-weight:500;color:var(--ink);background:var(--paper);line-height:1.65;font-size:18px;}
+h1,h2,h3{font-weight:900;line-height:1.2;}
+a{color:var(--teal);text-decoration:none;} a:hover{text-decoration:underline;}
+code,pre,kbd{font-family:'JetBrains Mono','Fira Code',Consolas,monospace;}
+nav{position:sticky;top:0;z-index:50;background:rgba(26,26,26,.96);backdrop-filter:blur(6px);display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:10px 22px;}
+nav .brand{color:#fff;font-weight:900;font-size:17px;margin-right:auto;}
+nav .brand b{color:var(--gold);}
+nav a{color:#e9e4d6;font-weight:700;font-size:14.5px;padding:6px 11px;border-radius:8px;}
+nav a:hover{background:rgba(255,255,255,.12);text-decoration:none;color:#fff;}
+.hero{background:var(--cover);color:var(--paper);padding:80px 22px 64px;text-align:center;}
+.hero h1{font-size:clamp(32px,5.6vw,60px);margin:0 0 14px;}
+.hero h1 .accent{color:#FFDE7A;}
+.hero .sub{font-size:clamp(16px,2.4vw,21px);color:rgba(255,255,255,.92);max-width:760px;margin:0 auto;}
+.hero .facts{display:flex;gap:30px;justify-content:center;flex-wrap:wrap;margin-top:30px;}
+.hero .fact b{display:block;font-size:32px;font-weight:900;color:#FFDE7A;}
+.hero .fact span{font-size:14px;color:rgba(255,255,255,.82);font-weight:700;}
+main{max-width:1080px;margin:0 auto;padding:0 22px;}
+section{padding:60px 0 8px;scroll-margin-top:64px;border-top:1px solid var(--line);}
+section:first-of-type{border-top:none;}
+.kicker{color:var(--coral);font-weight:900;font-size:15px;letter-spacing:.14em;text-transform:uppercase;}
+section h2{font-size:clamp(27px,4vw,40px);margin:6px 0 8px;}
+section h3{font-size:22px;margin:32px 0 10px;color:var(--teal);}
+p{margin:14px 0;}
+.lead{font-size:20px;color:var(--ink-soft);}
+.grid{display:grid;gap:18px;margin:24px 0;}
+.g3{grid-template-columns:repeat(3,1fr);} .g2{grid-template-columns:repeat(2,1fr);}
+.card{background:var(--paper2);border:1px solid var(--line);border-radius:16px;padding:22px;}
+.card h4{margin:0 0 8px;font-size:18px;font-weight:900;color:var(--teal);}
+.card.coral h4{color:var(--coral);}
+figure{margin:26px 0;background:var(--paper2);border:1px solid var(--line);border-radius:16px;padding:14px;text-align:center;}
+figure img{max-width:100%;height:auto;border-radius:8px;display:block;margin:0 auto;}
+figcaption{font-size:15px;color:var(--ink-soft);font-weight:700;margin-top:10px;}
+figcaption b{color:var(--coral);}
+.callout{border-left:6px solid var(--teal);background:var(--paper2);border-radius:0 14px 14px 0;padding:18px 22px;margin:24px 0;font-size:18px;}
+.callout.coral{border-color:var(--coral);}
+.callout .tag{font-weight:900;color:var(--teal);} .callout.coral .tag{color:var(--coral);}
+.eq{background:var(--paper2);border:1px dashed var(--teal);border-radius:12px;padding:14px 18px;margin:18px 0;text-align:center;font-size:19px;}
+pre{background:#1f2329;border-radius:14px;padding:0;margin:18px 0;overflow:auto;border:1px solid #2c313a;}
+pre code{display:block;padding:20px 22px;font-size:14px;line-height:1.6;background:transparent;color:#e9e4d6;}
+.steps{counter-reset:s;list-style:none;padding:0;}
+.steps li{position:relative;padding:10px 0 10px 46px;border-bottom:1px solid var(--line);}
+.steps li:last-child{border-bottom:none;}
+.steps li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:8px;width:30px;height:30px;background:var(--teal);color:#fff;border-radius:50%;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:15px;}
+table{width:100%;border-collapse:collapse;margin:24px 0;font-size:16px;background:var(--paper2);border-radius:14px;overflow:hidden;}
+th,td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--line);}
+th{background:var(--teal);color:#fff;font-weight:900;}
+tr:last-child td{border-bottom:none;}
+td b.teal{color:var(--teal);} td b.coral{color:var(--coral);}
+.btnrow{display:flex;gap:12px;flex-wrap:wrap;margin:22px 0;}
+.btn{background:var(--teal);color:#fff;font-weight:900;padding:12px 20px;border-radius:12px;font-size:15px;}
+.btn.coral{background:var(--coral);} .btn:hover{text-decoration:none;opacity:.92;}
+footer{background:var(--cover);color:rgba(255,255,255,.85);padding:38px 22px;margin-top:56px;text-align:center;font-size:14px;}
+footer b{color:#FFDE7A;}
+@media(max-width:760px){.g3,.g2{grid-template-columns:1fr;}body{font-size:17px;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="brand">Benchtop NMR × 咖啡真偽 <b>·</b> PCA / PLS / PLS-DA</span>
+  <a href="#data">資料集</a><a href="#pca">PCA</a><a href="#pls">PLS 回歸</a><a href="#plsda">PLS-DA</a><a href="#python">Python</a><a href="#orange">Orange</a><a href="#summary">總結</a>
+</nav>
+
+<header class="hero">
+  <h1>桌上型 NMR，揪出咖啡裡的<span class="accent">摻假指紋</span></h1>
+  <p class="sub">用 60 支市售「Arabica」咖啡的 60 MHz benchtop NMR 光譜，一次學會化學計量學三大方法：<br>PCA 探索結構、PLS 定量摻假標記、PLS-DA 真偽快篩。</p>
+  <div class="facts">
+    <div class="fact"><b>60</b><span>咖啡樣本</span></div>
+    <div class="fact"><b>4201</b><span>NMR ppm 點</span></div>
+    <div class="fact"><b>R²cv 0.99</b><span>16-OMC 定量</span></div>
+    <div class="fact"><b>85%</b><span>高/低分類</span></div>
+  </div>
+</header>
+
+<main>
+
+<!-- DATA -->
+<section id="data">
+  <span class="kicker">資料集 · 咖啡真偽</span>
+  <h2>60 支「Arabica」咖啡的桌上型 NMR</h2>
+  <p class="lead">資料來自 <b>QIB Chemometrics</b> 公開的 Benchtop-NMR-Coffee-Survey：全球零售通路買來的 60 包標示「Arabica」的烘焙咖啡，取其親脂性萃取物，用 <b>60 MHz「桌上型 / 精簡型」NMR</b> 量測 0.2–5.8 ppm 的 ¹H 光譜（本資料 4201 個點）。背景是 Gunning et al. (2018) 的研究：<b>16-O-methylcafestol（16-OMC）</b>常被當作 Robusta 摻入 Arabica 的標記。</p>
+  <div class="grid g3">
+    <div class="card"><h4>便宜、快速</h4>桌上型 NMR 體積小、不需液態氦，幾分鐘就能測一支咖啡，適合通路端真偽快篩。</div>
+    <div class="card"><h4>化學位移指紋</h4>每支咖啡一條光譜 = 上百種脂質成分的化學指紋，含 16-OMC 等二萜類標記。</div>
+    <div class="card coral"><h4>挑戰</h4>一條光譜 4201 個點、樣本只有 60 支，<b>必須靠化學計量學</b>才能萃取出真偽資訊。</div>
+  </div>
+  <figure>
+    <img src="python/figures/nc01_meanspec.png" alt="平均 benchtop NMR 咖啡光譜">
+    <figcaption>60 支咖啡的平均 ¹H 光譜。橘色區（<b>~0.46 ppm</b>）是 16-OMC / 二萜類標記區段——肉眼看不出哪支咖啡這裡比較高。</figcaption>
+  </figure>
+  <h3>前處理與「標籤從哪來」</h3>
+  <p>4201 個點先做 <b>面積標準化</b>（消除濃度差異）、再 <b>分箱</b>（每 0.04 ppm 併成一桶 → 133 桶，降維去噪）。這份資料只有光譜、沒有現成標籤，所以我們把 <b>0.43–0.53 ppm 的標記峰積分</b>當作「16-OMC 標記量」：當成 PLS 的<b>連續目標</b>，再以中位數切成 <b>高 / 低兩組</b>當 PLS-DA 的<b>類別</b>（模擬真偽快篩的 pass/fail 門檻）。</p>
+  <div class="grid g2">
+    <figure><img src="python/figures/nc02_marker_zoom.png" alt="標記區段高低組對照"><figcaption>放大 0.33–0.80 ppm：<b>高 16-OMC 組</b>在 ~0.46 ppm 明顯有一個低組沒有的峰。</figcaption></figure>
+    <figure><img src="python/figures/nc03_marker_box.png" alt="標記量箱形圖"><figcaption>以中位數把 60 支分成高 / 低各 30 支（標記量為連續分布，非天然二分）。</figcaption></figure>
+  </div>
+  <table>
+    <tr><th>項目</th><th>數值</th><th>說明</th></tr>
+    <tr><td>樣本數</td><td><b class="teal">60</b></td><td>市售「Arabica」咖啡（CS×54、DH×6）</td></tr>
+    <tr><td>原始 ppm 點</td><td><b class="teal">4201</b></td><td>0.35–5.71 ppm，60 MHz benchtop</td></tr>
+    <tr><td>分箱後維度</td><td><b class="teal">133</b></td><td>0.04 ppm / 桶</td></tr>
+    <tr><td>PLS 目標（回歸）</td><td><b class="coral">16-OMC 標記量</b></td><td>0.43–0.53 ppm 積分，連續值</td></tr>
+    <tr><td>PLS-DA 類別</td><td><b class="coral">高 / 低</b></td><td>標記量中位數切分，各 30 支</td></tr>
+  </table>
+</section>
+
+<!-- PCA -->
+<section id="pca">
+  <span class="kicker">方法一 · 非監督</span>
+  <h2>PCA：把 133 個桶壓成幾個方向</h2>
+  <p class="lead">主成分分析（PCA）在資料最分散的方向上建立新座標：PC1 是變異最大的方向、PC2 與它垂直且次大……少數幾個主成分就能描述整體化學結構，不需要任何標籤。</p>
+  <div class="eq">資料矩陣 X (60×133) ≈ 分數 T × 負荷 Pᵀ ＋ 殘差</div>
+  <div class="grid g2">
+    <figure><img src="python/figures/nc04_scree.png" alt="PCA 陡坡圖"><figcaption>陡坡圖：<b>PC1 佔 62.6%</b>、PC2 15.4%，前兩主成分就抓住約 <b>78%</b> 的變異。</figcaption></figure>
+    <figure><img src="python/figures/nc05_scores.png" alt="PCA 分數圖"><figcaption>分數圖依 16-OMC 高/低上色：兩組沿 <b>PC1</b> 明顯分開——代表「整體脂質指紋」就跟著摻假程度在變。</figcaption></figure>
+  </div>
+  <figure><img src="python/figures/nc06_loadings.png" alt="PC1 負荷"><figcaption>PC1 負荷對 ppm：除了 0.46 ppm 標記區，<b>多個脂質區段</b>也一起變動——Robusta 的影響是「全譜性」的。</figcaption></figure>
+  <div class="callout"><span class="tag">PCA 的收穫：</span>不用標籤，PCA 就看出 60 支咖啡的主要差異方向，而且這個方向跟 16-OMC 摻假高度吻合（與標記量相關 −0.76）。這是後面建監督模型的好基礎。</div>
+</section>
+
+<!-- PLS -->
+<section id="pls">
+  <span class="kicker">方法二 · 監督回歸</span>
+  <h2>PLS：從指紋「定量」摻假標記</h2>
+  <p class="lead">偏最小平方回歸（PLS）找的是「同時解釋光譜 X、又跟目標 y 最相關」的方向，特別適合「特徵多（133）、樣本少（60）、又高度共線」的光譜資料。我們用它來預測 16-OMC 標記量。</p>
+  <div class="callout coral"><span class="tag">⚠️ 重要的教學陷阱：資料洩漏</span>
+    標記量是從 0.43–0.53 ppm 算出來的，如果把這幾個桶也丟進 X，模型只是「把答案抄回來」，R²cv 會假性接近 1。<b>所以我們先把標記區段從 X 拿掉</b>，逼模型用「光譜其餘部分」去預測——這才是有意義的問題。</div>
+  <div class="grid g2">
+    <figure><img src="python/figures/nc07_pls_rmsecv.png" alt="RMSECV 選成分數"><figcaption>用交叉驗證誤差 <b>RMSECV</b> 選潛在變數（LV）：2 個 LV 後快速收斂，取精簡的成分數避免過配。</figcaption></figure>
+    <figure><img src="python/figures/nc08_pls_pred.png" alt="預測 vs 實際"><figcaption>交叉驗證的預測 vs 實際：<b>R²cv ≈ 0.99、RMSECV ≈ 0.08</b>。即使不看標記峰，<b>其餘指紋也能準確預測</b> 16-OMC。</figcaption></figure>
+  </div>
+  <figure><img src="python/figures/nc09_pls_coef.png" alt="PLS 回歸係數"><figcaption>回歸係數對 ppm：模型主要靠 <b>標記區以外</b>的多個脂質訊號——印證「Robusta 改變整個脂質輪廓」。</figcaption></figure>
+  <div class="eq">RMSECV = √( Σ(yᵢ − ŷᵢ)² / n )　·　ŷ 來自「沒看過該樣本」的交叉驗證</div>
+</section>
+
+<!-- PLS-DA -->
+<section id="plsda">
+  <span class="kicker">方法三 · 監督分類</span>
+  <h2>PLS-DA：真偽「快篩」分類</h2>
+  <p class="lead">如果只想知道一支咖啡「16-OMC 偏高或偏低」（pass/fail），就用 PLS-DA：把類別編成 0/1，對它做 PLS 回歸，再以 0.5 為界判類。同樣排除標記區段，測試「其餘指紋」能不能分辨高低。</p>
+  <div class="eq">類別 y ∈ {0,1} ──PLS──▶ 預測分數 ŷ　→　ŷ &gt; 0.5 判為「高」</div>
+  <div class="grid g2">
+    <figure><img src="python/figures/nc11_plsda_scores.png" alt="PLS-DA 潛在空間"><figcaption>PLS 潛在空間（LV1–LV2）：高 / 低兩組大致分開，邊界附近有重疊（中位數切分本來就有模糊地帶）。</figcaption></figure>
+    <figure><img src="python/figures/nc10_plsda_cm.png" alt="混淆矩陣"><figcaption>5-fold 交叉驗證混淆矩陣：<b>準確率 85%、AUC 0.93</b>。誤判集中在標記量接近中位數的樣本。</figcaption></figure>
+  </div>
+  <figure><img src="python/figures/nc12_plsda_coef.png" alt="PLS-DA 判別係數"><figcaption>判別係數對 ppm：跟 PLS 回歸一致，靠的是標記區以外的多個脂質區段。</figcaption></figure>
+  <div class="callout"><span class="tag">PLS 回歸 vs PLS-DA：</span>同一份資料、同一套 PLS——目標是<b>連續值</b>就做回歸（定量），目標是<b>類別</b>就做判別（分類）。先回歸看能不能準確定量，再分類看快篩可不可行，是光譜真偽鑑別的標準流程。</div>
+</section>
+
+<!-- PYTHON -->
+<section id="python">
+  <span class="kicker">動手做 · Python</span>
+  <h2>用 scikit-learn 重現</h2>
+  <p>四支腳本，依序跑完就能產出上面所有圖（輸出到 <code>python/figures/</code>）。</p>
+  <pre><code>pip install pyreadr pandas numpy scikit-learn matplotlib
+python python/00_get_data.py   # 下載光譜、面積歸一、分箱、算 16-OMC 標記、輸出 CSV/Orange
+python python/01_explore.py    # 平均光譜、標記區高/低對照、標記量箱形圖
+python python/02_pca.py        # 標準化 + PCA -> 陡坡 / 分數 / 負荷
+python python/03_pls.py        # PLS 回歸定量 16-OMC（排除標記區）
+python python/04_plsda.py      # PLS-DA 高/低分類（排除標記區）</code></pre>
+  <p class="codecap">PLS 的核心（scikit-learn）：</p>
+  <pre><code>from sklearn.cross_decomposition import PLSRegression
+from sklearn.model_selection import cross_val_predict, KFold
+pls = PLSRegression(n_components=4)
+y_cv = cross_val_predict(pls, X, y, cv=KFold(5, shuffle=True, random_state=0))
+# 回歸：y 是連續的 16-OMC 標記量；PLS-DA：y 改成 0/1 類別，再用 0.5 判類</code></pre>
+</section>
+
+<!-- ORANGE -->
+<section id="orange">
+  <span class="kicker">動手做 · 不寫程式</span>
+  <h2>用 Orange Data Mining 拉一遍</h2>
+  <p>資料檔 <code>data/coffee_nmr_orange.tab</code>（<code>group</code> 已設 class、<code>marker_score</code> 為連續、133 個分箱特徵）。</p>
+  <ol class="steps">
+    <li><b>File</b> → 開 <code>coffee_nmr_orange.tab</code> → 接 <b>Data Table</b> 看 60 列。</li>
+    <li><b>Preprocess</b>：勾 <b>Normalize features</b>（標準化）。</li>
+    <li><b>PCA</b> → 接 <b>Scatter Plot</b>，x=PC1、y=PC2、Color=<code>group</code> → 看高/低沿 PC1 分開。</li>
+    <li><b>回歸（PLS）</b>：Select Columns 把 <code>marker_score</code> 設 Target → <b>PLS</b> + <b>Test &amp; Score</b>（交叉驗證）看 R² / RMSE。</li>
+    <li><b>分類（PLS-DA / 判別）</b>：把 <code>group</code> 設 Target → <b>Logistic Regression</b> 或 <b>PLS</b> + <b>Test &amp; Score</b> + <b>Confusion Matrix</b>。</li>
+  </ol>
+  <div class="callout coral"><span class="tag">提醒：</span>想嚴謹一點，可在 Select Columns 把 0.43–0.53 ppm 的桶（如 <code>b0.44</code>、<code>b0.48</code>、<code>b0.52</code>）設為 ignore，避免用標記峰直接「抄答案」。</div>
+</section>
+
+<!-- SUMMARY -->
+<section id="summary">
+  <span class="kicker">總結</span>
+  <h2>一份光譜，三個方法</h2>
+  <div class="grid g3">
+    <div class="card"><h4>PCA</h4>非監督探索：60 支咖啡的主要差異方向，PC1 就對上摻假程度。</div>
+    <div class="card"><h4>PLS 回歸</h4>監督定量：用指紋（去掉標記峰）預測 16-OMC，R²cv 0.99。</div>
+    <div class="card coral"><h4>PLS-DA</h4>監督分類：真偽快篩高/低，準確率 85%、AUC 0.93。</div>
+  </div>
+  <div class="callout"><span class="tag">資料素養重點：</span>R² 太完美時先想「目標是不是混進了輸入」（資料洩漏）；樣本少、類別不平衡時，<b>交叉驗證</b>與保留獨立測試集是底線。本資料樣本僅 60、且標籤是自訂門檻，屬概念示範。</div>
+  <h3>同主題搭配課程</h3>
+  <div class="btnrow">
+    <a class="btn" href="https://tai-shengyeh.github.io/ftir-food-analysis/teaching.html">FTIR × 咖啡 Arabica/Robusta ↗</a>
+    <a class="btn coral" href="https://tai-shengyeh.github.io/coffee_pgmm_R_code/coffee_pgmm.html">coffee 化學成分 PCA/GMM ↗</a>
+    <a class="btn" href="https://tai-shengyeh.github.io/nmr-food-analysis/teaching.html">NMR × 白酒 PLS 回歸 ↗</a>
+  </div>
+  <p>資料來源：QIBChemometrics / Benchtop-NMR-Coffee-Survey（Gunning et al., <i>Food Chemistry</i> 2018, doi:10.1016/j.foodchem.2017.12.034）。</p>
+</section>
+
+</main>
+<footer>
+  <b>Benchtop NMR × 咖啡真偽</b> — PCA / PLS / PLS-DA 教學包 ｜ 葉泰聖 ｜
+  <a href="https://tai-shengyeh.github.io/" style="color:#9fe6e4">課程總入口</a>
+</footer>
+</body>
+</html>

@@ -1,0 +1,5 @@
+# 上游原始光譜（由 python/00_get_data.py 自動下載）＋中間檔
+python/raw.csv
+python/_*.npy
+__pycache__/
+*.pyc
