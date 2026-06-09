@@ -71,7 +71,7 @@ footer b{color:#FFDE7A;}
 
 <nav>
   <span class="brand">Benchtop NMR × 咖啡真偽 <b>·</b> PCA / PLS / PLS-DA</span>
-  <a href="#data">資料集</a><a href="#pca">PCA</a><a href="#pls">PLS 回歸</a><a href="#plsda">PLS-DA</a><a href="#python">Python</a><a href="#orange">Orange</a><a href="#summary">總結</a>
+  <a href="#data">資料集</a><a href="#pca">PCA</a><a href="#pls">PLS 回歸</a><a href="#plsda">PLS-DA</a><a href="#python">Python</a><a href="#orange">Orange</a><a href="#lit">文獻</a><a href="#summary">總結</a>
 </nav>
 
 <header class="hero">
@@ -192,6 +192,59 @@ y_cv = cross_val_predict(pls, X, y, cv=KFold(5, shuffle=True, random_state=0))
     <li><b>分類（PLS-DA / 判別）</b>：把 <code>group</code> 設 Target → <b>Logistic Regression</b> 或 <b>PLS</b> + <b>Test &amp; Score</b> + <b>Confusion Matrix</b>。</li>
   </ol>
   <div class="callout coral"><span class="tag">提醒：</span>想嚴謹一點，可在 Select Columns 把 0.43–0.53 ppm 的桶（如 <code>b0.44</code>、<code>b0.48</code>、<code>b0.52</code>）設為 ignore，避免用標記峰直接「抄答案」。</div>
+</section>
+
+<!-- LITERATURE -->
+<section id="lit">
+  <span class="kicker">學術文獻 · 參考比對</span>
+  <h2>兩種脂質標記：NMR 的二萜 vs GC 的脂肪酸</h2>
+  <p class="lead">本頁用 NMR 抓的是 <b>16-O-methylcafestol（16-OMC）</b>——一個二萜類的 Robusta 摻入標記。其實 Robusta 在<b>脂肪酸</b>上也有公認差異；兩篇用 GC 測脂肪酸的研究提供了另一組互補的品種標記（Romano 等 2014 也把 16-OMC 與脂肪酸並列為候選標記）。</p>
+  <div class="grid g2">
+    <div class="card">
+      <h4>Martín 等 (2001) · Talanta</h4>
+      <p>毛細管 GC-FID 測 <b>40 支</b>咖啡（27 Arabica / 13 Robusta，生豆＋烘焙豆）的 <b>10 種脂肪酸</b>，以 PCA + LDA 判別：</p>
+      <ul>
+        <li>PCA PC1 <b>40.7%</b>；判別成分為油酸 (C18:1)、次亞麻油酸 (C18:3)、亞麻油酸 (C18:2)、肉豆蔻酸 (C14:0)</li>
+        <li>「油酸 vs 次亞麻油酸」散布圖即可<b>完全分開</b>兩品種</li>
+        <li>LDA 品種辨識率 <b>100%</b></li>
+      </ul>
+    </div>
+    <div class="card coral">
+      <h4>Romano 等 (2014) · J. Food Compos. Anal.</h4>
+      <p>以 HRGC/FID 脂肪酸標記<b>定量混合比例</b>防摻假：</p>
+      <ul>
+        <li>標記：ΣMUFA、次亞麻油酸 (18:3n-3)、18:0/18:1 比值、ΣMUFA/ΣSFA</li>
+        <li>PCA PC1 <b>97.56%</b>；標記與 Arabica 含量的線性迴歸 <b>r=0.98</b></li>
+        <li>能抓出<b>標示與實際不符</b>的市售咖啡（如標 80%、實測約 58%）</li>
+      </ul>
+    </div>
+  </div>
+  <h3>關鍵化學：脂肪酸標記（GC）</h3>
+  <table>
+    <tr><th>脂肪酸</th><th>Arabica</th><th>Robusta</th><th>判別意義</th></tr>
+    <tr><td>油酸 Oleic (C18:1)</td><td>~7.7–8.3%</td><td><b class="coral">~12.1–12.3%</b></td><td>Robusta 明顯較高</td></tr>
+    <tr><td>次亞麻油酸 Linolenic (C18:3)</td><td><b class="teal">~1.4–1.5%</b></td><td>~0.7–0.9%</td><td>Arabica 較高</td></tr>
+    <tr><td>亞麻油酸 Linoleic (C18:2)</td><td>~43.6%</td><td>~39.3%</td><td>主成分、Arabica 略高</td></tr>
+    <tr><td>棕櫚酸 Palmitic (C16:0)</td><td>~33–36%</td><td>~36%</td><td>主要飽和脂肪酸</td></tr>
+  </table>
+  <p class="codecap" style="margin-bottom:0">數值整理自 Martín 等 (2001) 與 Romano 等 (2014)；脂肪酸組成烘焙前後穩定，與 16-OMC 同屬「脂質類」品種標記。</p>
+  <div class="callout"><span class="tag">互補的標記：</span>
+    本頁（NMR）看二萜 <b>16-OMC</b>；文獻（GC）看脂肪酸 <b>油酸／次亞麻油酸</b>。兩者都能標示 Robusta 摻入、都可定量——NMR 快速整譜，GC 分子層級。多標記併用，真偽鑑別更穩健。</div>
+  <table>
+    <tr><th>面向</th><th>本頁 NMR</th><th>Martín 2001</th><th>Romano 2014</th></tr>
+    <tr><td>測什麼</td><td>60 MHz ¹H NMR（133 桶）</td><td>10 種脂肪酸</td><td>脂肪酸 + 比值標記</td></tr>
+    <tr><td>標記分子</td><td><b class="coral">16-OMC（二萜）</b></td><td>脂肪酸</td><td>脂肪酸（+ 比值）</td></tr>
+    <tr><td>樣本數</td><td>60 市售咖啡</td><td>40</td><td>11 純品 + 多組混合</td></tr>
+    <tr><td>目標</td><td>定量 16-OMC + 高/低分類</td><td>分類 A / R</td><td><b class="coral">定量混合比例</b></td></tr>
+    <tr><td>關鍵結果</td><td>R²cv 0.99 / 分類 85%</td><td>LDA 100%</td><td>r=0.98、抓出標示不符</td></tr>
+  </table>
+  <div class="callout coral"><span class="tag">延伸思考：</span>
+    本頁用 16-OMC <b>定量摻假</b>（PLS R²cv 0.99）；Romano 等 (2014) 則用脂肪酸標記<b>定量混合比例</b>、抓出市售標示不符。不同分子、同一個食品安全目標——多種技術交叉佐證，結論更可靠。</div>
+  <h3>引用文獻</h3>
+  <p style="font-size:14.5px;color:var(--ink-soft)">
+    1. Martín, M.J., Pablos, F., González, A.G., Valdenebro, M.S., León-Camacho, M. (2001). <i>Fatty acid profiles as discriminant parameters for coffee varieties differentiation.</i> <b>Talanta</b> 54(2), 291–297.<br>
+    2. Romano, R., Santini, A., Le Grottaglie, L., Manzo, N., Visconti, A., Ritieni, A. (2014). <i>Identification markers based on fatty acid composition to differentiate between roasted Arabica and Canephora (Robusta) coffee varieties in mixtures.</i> <b>Journal of Food Composition and Analysis</b> 35(1), 1–9.
+  </p>
 </section>
 
 <!-- SUMMARY -->
